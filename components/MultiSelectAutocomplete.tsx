@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { useRickAndMortyAPI } from "@/hooks/useRickAndMortyAPI";
 import { useCharacterStore } from "@/store/useCharacterStore";
@@ -80,7 +81,10 @@ const MultiSelectAutocomplete = () => {
   };
 
   return (
-    <View className="flex-1">
+    <View
+      style={{ paddingTop: Platform.OS === "android" && 20 }}
+      className="flex-1"
+    >
       <TouchableOpacity style={{ width: 380 }} className="relative pt-3 m-2 ">
         <View className="border rounded-xl p-2">
           <View className="flex flex-row items-center justify-between">
