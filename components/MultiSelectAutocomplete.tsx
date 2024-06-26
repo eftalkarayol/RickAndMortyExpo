@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   TextInput,
@@ -6,16 +6,23 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  StyleSheet,
   Platform,
+  ListRenderItem,
 } from "react-native";
 import { useRickAndMortyAPI } from "@/hooks/useRickAndMortyAPI";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { CheckBox } from "rn-inkpad";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { AntDesign } from "@expo/vector-icons";
 
-const MultiSelectAutocomplete = () => {
-  const [query, setQuery] = useState("");
+interface Character {
+  id: number;
+  name: string;
+  image: string;
+  episode: string[];
+}
+
+const MultiSelectAutocomplete: React.FC = () => {
+  const [query, setQuery] = useState<string>("");
   const { data, isLoading, error } = useRickAndMortyAPI(query);
 
   const {
@@ -44,28 +51,37 @@ const MultiSelectAutocomplete = () => {
     filterCharacters(query);
   }, [refresh, filterCharacters]);
 
-  const toggleSelection = (character) => {
-    toggleCharacterCheck(character);
-  };
+  const toggleSelection = useCallback(
+    (character: Character) => {
+      toggleCharacterCheck(character);
+    },
+    [toggleCharacterCheck]
+  );
 
-  const isSelected = (character) => {
-    const selectedCharacter = selectedCharacters.find(
-      (c) => c.id === character.id
-    );
-    return selectedCharacter ? selectedCharacter.isChecked : false;
-  };
+  const isSelected = useCallback(
+    (character: Character) => {
+      const selectedCharacter = selectedCharacters.find(
+        (c) => c.id === character.id
+      );
+      return selectedCharacter ? selectedCharacter.isChecked : false;
+    },
+    [selectedCharacters]
+  );
 
-  const handleRemove = (character) => {
-    updateCharacterCheck(character.id, false);
-    removeCharacter(character.id);
-    setRefresh();
-  };
+  const handleRemove = useCallback(
+    (character: Character) => {
+      updateCharacterCheck(character.id, false);
+      removeCharacter(character.id);
+      setRefresh();
+    },
+    [updateCharacterCheck, removeCharacter, setRefresh]
+  );
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleOpen = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
 
   const charactersToShow = isOpen
     ? selectedCharacters
@@ -73,16 +89,40 @@ const MultiSelectAutocomplete = () => {
 
   const hasCharactersToShow = charactersToShow.length > 0;
 
-  const truncateText = (text, maxLength) => {
+  const truncateText = useCallback((text: string, maxLength: number) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + "...";
     }
     return text;
-  };
+  }, []);
+
+  const renderItem: ListRenderItem<Character> = useCallback(
+    ({ item }) => (
+      <TouchableOpacity className="p-2 border-b border-black">
+        <View className="flex flex-row items-center pr-10">
+          <CheckBox
+            iconColor="blue"
+            checked={isSelected(item)}
+            onChange={() => toggleSelection(item)}
+            title=""
+          />
+          <Image
+            className="h-16 w-16 rounded-md ml-4"
+            source={{ uri: item.image }}
+          />
+          <View className="ml-4">
+            <Text>{highlightQuery(item.name, query)}</Text>
+            <Text>{item.episode.length} episodes</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    ),
+    [isSelected, toggleSelection, query]
+  );
 
   return (
     <View
-      style={{ paddingTop: Platform.OS === "android" && 20 }}
+      style={{ paddingTop: Platform.OS === "android" ? 20 : 0 }}
       className="flex-1"
     >
       <TouchableOpacity style={{ width: 380 }} className="relative pt-3 m-2 ">
@@ -178,26 +218,7 @@ const MultiSelectAutocomplete = () => {
           <FlatList
             data={filteredCharacters}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity className="p-2 border-b border-black">
-                <View className="flex flex-row items-center pr-10">
-                  <CheckBox
-                    iconColor={"blue"}
-                    checked={isSelected(item)}
-                    onChange={() => toggleSelection(item)}
-                    title=""
-                  />
-                  <Image
-                    className="h-16 w-16 rounded-md ml-4"
-                    source={{ uri: item.image }}
-                  />
-                  <View className="ml-4">
-                    <Text>{highlightQuery(item.name, query)}</Text>
-                    <Text>{item.episode.length} episodes</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )}
+            renderItem={renderItem}
           />
         </View>
       ) : (
@@ -207,13 +228,13 @@ const MultiSelectAutocomplete = () => {
   );
 };
 
-const highlightQuery = (text, query) => {
+const highlightQuery = (text: string, query: string) => {
   const parts = text.split(new RegExp(`(${query})`, "gi"));
   return (
     <Text>
       {parts.map((part, index) =>
         part.toLowerCase() === query.toLowerCase() ? (
-          <Text key={index} style={styles.highlight}>
+          <Text key={index} style={{ fontWeight: "bold" }}>
             {part}
           </Text>
         ) : (
@@ -223,11 +244,5 @@ const highlightQuery = (text, query) => {
     </Text>
   );
 };
-
-const styles = StyleSheet.create({
-  highlight: {
-    fontWeight: "bold",
-  },
-});
 
 export default MultiSelectAutocomplete;
