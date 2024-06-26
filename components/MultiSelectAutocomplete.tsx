@@ -155,20 +155,9 @@ const MultiSelectAutocomplete: React.FC = () => {
                   value={query}
                   onChangeText={setQuery}
                   placeholder="Search"
-                  className="border-2 fw-bold pt-1 h-8 w-44 mr-32 border-white rounded-lg mb-2"
+                  className="border-2 border-white w-full h-[30px] pl-2.5 mr-2.5 rounded-lg font-bold overflow-hidden pt-0.5"
                   multiline={false}
                   numberOfLines={1}
-                  style={{
-                    borderWidth: 2,
-                    height: 30,
-                    width: "100%",
-                    paddingLeft: 10,
-                    borderColor: "white",
-                    borderRadius: 8,
-                    marginRight: 10,
-                    fontWeight: "bold",
-                    overflow: "hidden",
-                  }}
                 />
               </View>
             )}
@@ -176,7 +165,7 @@ const MultiSelectAutocomplete: React.FC = () => {
               onPress={toggleOpen}
               style={{
                 position: "absolute",
-                top: isOpen ? 11 : 8,
+                top: isOpen ? 11 : 5,
                 right: 5,
               }}
             >
@@ -193,18 +182,9 @@ const MultiSelectAutocomplete: React.FC = () => {
                 value={query}
                 onChangeText={setQuery}
                 placeholder="Search"
-                className="border-2 w-44 border-white pt-2"
+                className="border-2 border-white w-full h-[30px] pl-2.5 mb-2.5 font-bold overflow-hidden pt-2"
                 multiline={false}
                 numberOfLines={1}
-                style={{
-                  borderWidth: 2,
-                  height: 30,
-                  width: "100%",
-                  paddingLeft: 10,
-                  marginBottom: 10,
-                  fontWeight: "bold",
-                  overflow: "hidden",
-                }}
               />
             </View>
           )}
