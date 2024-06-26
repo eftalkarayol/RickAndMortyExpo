@@ -212,13 +212,17 @@ const MultiSelectAutocomplete: React.FC = () => {
       </TouchableOpacity>
 
       {query ? (
-        <View className="border border-black m-2 rounded-lg bg-blue-100 mt-1">
+        <View
+          className="border border-black m-2 rounded-lg bg-blue-100 mt-1"
+          style={{ height: 650 }}
+        >
           {isLoading && <Text>Loading...</Text>}
           {error && <Text>Error: {error.message}</Text>}
           <FlatList
             data={filteredCharacters}
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
+            contentContainerStyle={{ flexGrow: 1 }}
           />
         </View>
       ) : (
