@@ -22,10 +22,6 @@ interface Character {
   episode: string[];
 }
 
-interface SelectedCharacter extends Character {
-  isChecked: boolean;
-}
-
 const MultiSelectAutocomplete: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const { data, isLoading, error } = useRickAndMortyAPI(query);
@@ -209,6 +205,8 @@ const MultiSelectAutocomplete: React.FC = () => {
               autoscrollToTopThreshold: 5,
             }}
             initialScrollIndex={0}
+            horizontal={false}
+            ListFooterComponent={<View style={{ height: 200 }} />}
           />
         </View>
       ) : (
