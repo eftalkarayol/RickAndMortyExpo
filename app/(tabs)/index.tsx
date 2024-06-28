@@ -3,16 +3,17 @@ import React from "react";
 import MultiSelectAutocomplete from "@/components/MultiSelectAutocomplete";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { styled } from "nativewind";
 const queryClient = new QueryClient();
 const TabOneScreen = () => {
+  const StyledView = styled(View);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
-          <View style={styles.container}>
+          <StyledView style={styles.container}>
             <MultiSelectAutocomplete />
-          </View>
+          </StyledView>
         </SafeAreaProvider>
       </QueryClientProvider>
     </SafeAreaView>
@@ -25,7 +26,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

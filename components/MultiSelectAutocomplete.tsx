@@ -13,12 +13,17 @@ import { useRickAndMortyAPI } from "@/hooks/useRickAndMortyAPI";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { CheckBox } from "rn-inkpad";
 import { AntDesign } from "@expo/vector-icons";
+import SearchInput from "./SearchInput";
 
 interface Character {
   id: number;
   name: string;
   image: string;
   episode: string[];
+}
+
+interface SelectedCharacter extends Character {
+  isChecked: boolean;
 }
 
 const MultiSelectAutocomplete: React.FC = () => {
@@ -151,13 +156,11 @@ const MultiSelectAutocomplete: React.FC = () => {
             </View>
             {!isOpen && (
               <View style={{ flex: 1 }}>
-                <TextInput
+                <SearchInput
                   value={query}
                   onChangeText={setQuery}
                   placeholder="Search"
-                  className="border-2 border-white w-full h-[30px] pl-2.5 mr-2.5 rounded-lg font-bold overflow-hidden pt-0.5"
-                  multiline={false}
-                  numberOfLines={1}
+                  inputStyle="border-2 border-white w-full h-[30px] pl-2.5 mr-2.5 rounded-lg font-bold overflow-hidden pt-0.5"
                 />
               </View>
             )}
@@ -178,13 +181,11 @@ const MultiSelectAutocomplete: React.FC = () => {
           </View>
           {isOpen && (
             <View>
-              <TextInput
+              <SearchInput
                 value={query}
                 onChangeText={setQuery}
                 placeholder="Search"
-                className="border-2 border-white w-full h-[30px] pl-2.5 mb-2.5 font-bold overflow-hidden pt-2"
-                multiline={false}
-                numberOfLines={1}
+                inputStyle="border-2 border-white w-full h-[30px] pl-2.5 mb-2.5 font-bold overflow-hidden pt-2"
               />
             </View>
           )}
@@ -203,6 +204,11 @@ const MultiSelectAutocomplete: React.FC = () => {
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
             contentContainerStyle={{ flexGrow: 1 }}
+            maintainVisibleContentPosition={{
+              minIndexForVisible: 20,
+              autoscrollToTopThreshold: 5,
+            }}
+            initialScrollIndex={0}
           />
         </View>
       ) : (
